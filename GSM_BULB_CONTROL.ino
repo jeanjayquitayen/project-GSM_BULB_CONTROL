@@ -12,42 +12,42 @@ char message[MESSAGE_LENGTH];
 int messageIndex = 0;
 char phone[16];
 char datetime[24];
-char PHONE_NUMBER[]= "09567389688";
+char PHONE_NUMBER[]= "09663920595";
+//char PHONE_NUMBER[]= "09567389688";
 char MESSAGE[] =   "System is Ready.";
 char bulb1ON[] = "bulb1 on";
 char bulb2ON[] = "bulb2 on";
-char err[] = "Sorry, You have entered an invalid keyword.";
+char err[] = "Sorry, You have entered an invalid keyword.\n Try, Bulb1 on or Bulb2 on";
 const char Bulb1 = 7; //Bulb1 will be the assigned name of the actual pin (D7) on the arduino. 
 const char Bulb2 = 8; //Bulb2 will be the assigned name of the actual pin (D8) on the arduino. 
 bool Bulb1State = false; //we will use this to monitor the status of Bulb1
 bool Bulb2State = false; //we will use this to monitor the status of Bulb2
 GPRS GSMTEST(PIN_RX,PIN_TX,BAUDRATE);//RX,TX,BAUDRATE
-LiquidCrystal_I2C lcd(0x27,20,4);
+LiquidCrystal_I2C lcd(0x27,16,2);
 
 void setup() {
-
+  lcd.init();
+  lcd.backlight();
   pinMode(Bulb1,OUTPUT); //declare Bulb1 as output, this will allow us to trigger the relay.
   pinMode(Bulb2,OUTPUT); //declare Bulb2 as output, this will allow us to trigger the relay.
   digitalWrite(Bulb1,LOW); //let's makes sure that Bulb1 is off, so we set it to low.
   digitalWrite(Bulb2,LOW); //let's makes sure that Bulb2 is off, so we set it to low.
+  lcd.print("Initializing GSM");
+  while(!GSMTEST.init()) {
+      delay(1000);
+      //digitalWrite(7,LOW);
+     lcd.setCursor(0,1);
+     lcd.print("INIT ERROR");
+  } 
+  lcd.clear();
 
-  
-  Serial.begin(9600);
-  Serial.setTimeout(10);
-  lcd.init();
-  lcd.backlight();
-  
   lcd.print("BULB STATUS");
   lcd.setCursor(0,1);
   lcd.print("B1:OFF");
   lcd.setCursor(8,1);
   lcd.print("B2:OFF");
-  while(!GSMTEST.init()) {
-      delay(1000);
-      //digitalWrite(7,LOW);
-      Serial.print("INIT ERROR\r\n");
-  } 
-Serial.print("Initialization Successful!");
+
+
 GSMTEST.sendSMS(PHONE_NUMBER,MESSAGE);
 //DEFINE PHONE NUMBER AND TEXT
 delay(1000);
